@@ -6,6 +6,7 @@ WRITE YOUR CODE IN THE RESPECTIVE QUESTION FUNCTION BLOCK
 
 */
 
+using System;
 using System.Text;
 
 namespace ISM6225_Fall_2023_Assignment_2
@@ -108,29 +109,109 @@ namespace ISM6225_Fall_2023_Assignment_2
         Time complexity: O(n), space complexity:O(1)
         */
 
+        /*
+        FindMissingRanges function takes in a sorted integer array (nums), a lower bound (lower), and an upper bound (upper).
+        It returns a list of lists representing the missing ranges within the inclusive range [lower, upper].
+
+        The function works by iterating through the array "nums" and finding the missing ranges between "lower" and the first element of "nums," 
+        and between the last element of "nums" and "upper."
+
+        If the input array "nums" is empty, it simply adds the entire range [lower, upper] as a missing range.
+
+        Time complexity: O(n), where n is the length of the "nums" array.
+        Space complexity: O(1), as the output list "missingRanges" does not grow with the input size.
+        */
+
+        // Keep track of current number we are checking
         public static IList<IList<int>> FindMissingRanges(int[] nums, int lower, int upper)
+
         {
+
             try
+
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return new List<IList<int>>();
+
+                // Initialize list to store missing ranges
+
+                List<IList<int>> missingRanges = new List<IList<int>>();
+
+                // keep track of Current number we are checking
+
+                int current = lower;
+
+                // Go through given nums array
+
+                foreach (int num in nums)
+
+                {
+
+                    // check if gap between current and num is more than 1
+
+                    if (num > current + 1)
+
+                    {
+
+                        // Calculate start and end of missing range
+
+                        int start = current + 1;
+
+                        int end = num - 1;
+
+                        // Add missing range to list
+
+                        missingRanges.Add(new List<int> { start, end });
+
+                    }
+
+                    // Update current number
+
+                    current = num;
+
+                }
+
+                // Check for missing range after final number
+
+                if (upper > current + 1)
+
+                {
+
+                    // Calculate for missing range after final number
+
+                    int start = current + 1;
+
+                    int end = upper;
+
+                    // Add missing range
+
+                    missingRanges.Add(new List<int> { start, end });
+
+                }
+
+                // Return list of missing ranges
+
+                return missingRanges;
+
             }
+
             catch (Exception)
+
             {
+
                 throw;
+
             }
 
         }
 
         /*
-         
+
         Question 2
 
         Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.An input string is valid if:
         Open brackets must be closed by the same type of brackets.
         Open brackets must be closed in the correct order.
         Every close bracket has a corresponding open bracket of the same type.
- 
+
         Example 1:
 
         Input: s = "()"
@@ -156,12 +237,44 @@ namespace ISM6225_Fall_2023_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return s.Length == 0;
+                Stack<char> st = new Stack<char>();
+
+                foreach (char c in s)
+                {
+                    if (c == '(' || c == '[' || c == '{')
+                    {
+                        st.Push(c);
+                    }
+                    else
+                    {
+                        if (st.Count == 0)
+                        {
+                            return false; // Closing brackets Don't Match
+                        }
+
+                        char openBracket = st.Pop();
+
+                        if (c == ')' && openBracket != '(')
+                        {
+                            return false; // Parentheses Don't Match
+                        }
+                        else if (c == ']' && openBracket != '[')
+                        {
+                            return false; // Square brackets Don't Match
+                        }
+                        else if (c == '}' && openBracket != '{')
+                        {
+                            return false; // Curly braces Don't Match
+                        }
+                    }
+                }
+
+                return st.Count == 0; // Check if any open brackets in st remain Unmatched
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                Console.WriteLine($"An exception occurred: {ex.Message}");
+                return false; // If exception, Invalid Input
             }
         }
 
@@ -191,11 +304,31 @@ namespace ISM6225_Fall_2023_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 1;
+                // Check if the input array is null or has fewer than 2 elements
+                if (prices == null || prices.Length < 2)
+                {
+                    // return 0, If not enough days to make profits
+                    return 0;
+                }
+
+                // Declare variables to track min Price and max Profit
+                int min = prices[0];
+                int max = 0;
+
+                // Go through prices array, Update min and max values when needed
+                for (int i = 1; i < prices.Length; i++)
+                {
+                    int current = prices[i];
+                    max = Math.Max(max, current - min);
+                    min = Math.Min(min, current);
+                }
+
+                // Return Max profit
+                return max;
             }
             catch (Exception)
             {
+                // Catch Exceptions and Throw again
                 throw;
             }
         }
@@ -229,11 +362,38 @@ namespace ISM6225_Fall_2023_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return false;
-            }
-            catch (Exception)
+                // Create Dictionaries for storing Valid Strobogrammatic pairs
+                Dictionary<char, char> strpair = new Dictionary<char, char>
             {
+                {'0', '0'},
+                {'1', '1'},
+                {'6', '9'},
+                {'8', '8'},
+                {'9', '6'}
+            };
+
+                int left = 0;
+                int right = s.Length - 1;
+
+                while (left <= right)
+                {
+                    // Check if current characters form valid pair
+                    if (!strpair.ContainsKey(s[left]) || strpair[s[left]] != s[right])
+                    {
+                        return false;
+                    }
+
+                    // Move left and right pointers inwards
+                    left++;
+                    right--;
+                }
+
+                return true;
+            }
+            // Catch any exceptions and throw again
+            catch (Exception ex)
+            {
+                Console.WriteLine("An error occurred: " + ex.Message);
                 throw;
             }
         }
@@ -271,9 +431,28 @@ namespace ISM6225_Fall_2023_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 0;
+                // Create Dictionary for storing count occurences of each number
+                Dictionary<int, int> countMap = new Dictionary<int, int>();
+                int NiceP = 0;
+
+                foreach (int no in nums)
+                {
+                    // If number already exists in dictionary, increment pairs counter
+                    if (countMap.ContainsKey(no))
+                    {
+                        NiceP += countMap[no];
+                        countMap[no]++;
+                    }
+                    else
+                    {
+                        // If there is new number then add it to dictionary with count 1
+                        countMap[no] = 1;
+                    }
+                }
+                // Return total pairs found
+                return NiceP;
             }
+            // Catch any exceptions and throw again
             catch (Exception)
             {
                 throw;
@@ -321,9 +500,43 @@ namespace ISM6225_Fall_2023_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 0;
+                // Initialize variables to track top 3 numbers
+                long fst = long.MinValue;
+                long sec = long.MinValue;
+                long thi = long.MinValue;
+
+                foreach (int num in nums)
+                {
+                    // Update first if num is greater
+                    if (num > fst)
+                    {
+                        thi = sec;
+                        sec = fst;
+                        fst = num;
+                    }
+                    // Update second if num is between first and second
+                    else if (num < fst && num > sec)
+                    {
+                        thi = sec;
+                        sec = num;
+                    }
+                    // Update third if num is between second and third
+                    else if (num < sec && num > thi)
+                    {
+                        thi = num;
+                    }
+                }
+
+                // Check if third highest value is found
+                if (thi == long.MinValue)
+                {
+                    // If not, retuen first value
+                    return (int)fst;
+                }
+                // Return third highest value
+                return (int)thi;
             }
+            // Catch any Exceptions and throw again
             catch (Exception)
             {
                 throw;
@@ -354,9 +567,28 @@ namespace ISM6225_Fall_2023_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return new List<string>() { };
+                // Create list to store possible next moves
+                List<string> psbst = new List<string>();
+
+                // Loop through current state string
+                for (int i = 0; i < currentState.Length - 1; i++)
+                {
+                    // check if adjacent chars are '+'
+                    if (currentState[i] == '+' && currentState[i + 1] == '+')
+                    {
+                        // Make a copy of state as char array
+                        char[] newState = currentState.ToCharArray();
+                        newState[i] = '-';
+                        newState[i + 1] = '-';
+                        // add new state to list
+                        psbst.Add(new string(newState));
+                    }
+                }
+
+                // Return list of possible next moves
+                return psbst;
             }
+            // handle exception and throw again
             catch (Exception)
             {
                 throw;
@@ -383,30 +615,52 @@ namespace ISM6225_Fall_2023_Assignment_2
 
         public static string RemoveVowels(string s)
         {
-            // Write your code here and you can modify the return value according to the requirements
-            return "";
+            try
+            {
+                // Create StringBuilder to generate the output string
+                StringBuilder result = new StringBuilder();
+
+                foreach (char c in s)
+                {
+                    // Check if character is not a vowel
+                    if (c != 'a' && c != 'e' && c != 'i' && c != 'o' && c != 'u')
+                    {
+                        // Append non-vowel char to result
+                        result.Append(c);
+                    }
+                }
+                // Return string without vowels
+                return result.ToString();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         /* Inbuilt Functions - Don't Change the below functions */
+
+        // Function to convert nested integer list to string
         static string ConvertIListToNestedList(IList<IList<int>> input)
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.Append("["); // Add the opening square bracket for the outer list
+            sb.Append("[");
 
             for (int i = 0; i < input.Count; i++)
             {
                 IList<int> innerList = input[i];
+                // Add inner list to string
                 sb.Append("[" + string.Join(",", innerList) + "]");
 
-                // Add a comma unless it's the last inner list
+                // Add comma if not last inner list
                 if (i < input.Count - 1)
                 {
                     sb.Append(",");
                 }
             }
 
-            sb.Append("]"); // Add the closing square bracket for the outer list
+            sb.Append("]"); // Add closing square bracket for outer list
 
             return sb.ToString();
         }
@@ -414,15 +668,15 @@ namespace ISM6225_Fall_2023_Assignment_2
 
         static string ConvertIListToArray(IList<string> input)
         {
-            // Create an array to hold the strings in input
+            // Create array to hold the strings in input
             string[] strArray = new string[input.Count];
 
             for (int i = 0; i < input.Count; i++)
             {
-                strArray[i] = "\"" + input[i] + "\""; // Enclose each string in double quotes
+                strArray[i] = "\"" + input[i] + "\""; // add double quotes around each string
             }
 
-            // Join the strings in strArray with commas and enclose them in square brackets
+            // Concatenate the strings in strArray delimited by commas and enclosed in square brackets
             string result = "[" + string.Join(",", strArray) + "]";
 
             return result;
